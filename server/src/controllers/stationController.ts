@@ -41,10 +41,44 @@ export const getStationBoard = async (req: Request, res: Response) => {
   try {
     const departures = await dbClient.departures(stationId, {
       duration: minutes,
+      products: {
+        nationalExpress: true,
+        national: true,
+        regionalExpress: true,
+        regional: true,
+        suburban: false,
+        subway: false,
+        bus: false,
+        taxi: false,
+        tram: false,
+        ferry: false,
+      },
     });
-    const arrivals = await dbClient.arrivals(stationId, { duration: minutes });
+    const arrivals = await dbClient.arrivals(stationId, {
+      duration: minutes,
+      products: {
+        nationalExpress: true,
+        national: true,
+        regionalExpress: true,
+        regional: true,
+        suburban: false,
+        subway: false,
+        bus: false,
+        taxi: false,
+        tram: false,
+        ferry: false,
+      },
+    });
+    console.log("Raw departures:", departures);
+    console.log("Raw arrivals:", arrivals);
+    const departuresArray = Array.isArray(departures.departures)
+      ? departures.departures
+      : [];
+    const arrivalsArray = Array.isArray(arrivals.arrivals)
+      ? arrivals.arrivals
+      : [];
     res.json({
-      departures: departures.map((d: any) => ({
+      departures: departuresArray.map((d: any) => ({
         tripId: d.tripId,
         when: d.when,
         plannedWhen: d.plannedWhen,
@@ -63,7 +97,7 @@ export const getStationBoard = async (req: Request, res: Response) => {
             }
           : undefined,
       })),
-      arrivals: arrivals.map((a: any) => ({
+      arrivals: arrivalsArray.map((a: any) => ({
         tripId: a.tripId,
         when: a.when,
         plannedWhen: a.plannedWhen,
