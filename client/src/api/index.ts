@@ -7,4 +7,5 @@ const api = axios.create({
 export const fetchStationSuggestions = (query: string) =>
   api.get('/stations/autocomplete', { params: { q: query } })
 
-export const fetchStationDetails = (stationId: string) => api.get(`/stations/${stationId}/board`)
+export const fetchStationDetails = (stationId: string, duration?: number) =>
+  api.get(`/stations/${stationId}/board`, { params: { duration: duration?.toString() } })

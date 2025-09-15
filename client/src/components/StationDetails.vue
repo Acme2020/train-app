@@ -18,6 +18,7 @@ interface BoardEntry {
 
 const props = defineProps<{
   stationId: string | null
+  duration?: number
 }>()
 
 const arrivals = ref<BoardEntry[]>([])
@@ -25,8 +26,8 @@ const departures = ref<BoardEntry[]>([])
 const loading = ref(false)
 
 watch(
-  () => props.stationId,
-  async (newStationId) => {
+  () => [props.stationId, props.duration],
+  async ([newStationId, newDuration]) => {
     if (!newStationId) {
       arrivals.value = []
       departures.value = []
@@ -34,7 +35,7 @@ watch(
     }
     loading.value = true
     try {
-      const { data } = await fetchStationDetails(newStationId)
+      const { data } = await fetchStationDetails(newStationId, newDuration)
       arrivals.value = Array.isArray(data.arrivals)
         ? data.arrivals.map((a: BoardEntry) => ({
             ...a,

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createClient } from "db-vendo-client";
 import { profile } from "db-vendo-client/p/db/index.js";
+import { filterByDuration } from "../utils/filterByDuration";
 const dbClient = createClient(profile, "train-app/1.0.0");
 
 // Handler for /api/stations/autocomplete
@@ -22,8 +23,6 @@ export const autocompleteStations = async (req: Request, res: Response) => {
       .map((s: any) => ({
         id: s.id,
         name: s.name,
-        latitude: s.location?.latitude,
-        longitude: s.location?.longitude,
       }));
     res.json(mapped);
   } catch (err) {
@@ -34,13 +33,15 @@ export const autocompleteStations = async (req: Request, res: Response) => {
 // Handler for /api/stations/:stationId/board
 export const getStationBoard = async (req: Request, res: Response) => {
   const stationId = req.params.stationId;
-  const minutes = req.query.minutes ? Number(req.query.minutes) : 10;
+  const duration = req.query.duration ? Number(req.query.duration) : 10;
   if (!stationId) {
     return res.status(400).json({ error: "Missing stationId" });
   }
   try {
+    console.log(
+      `Fetching board for stationId: ${stationId} with duration: ${duration}`
+    );
     const departures = await dbClient.departures(stationId, {
-      duration: minutes,
       products: {
         nationalExpress: true,
         national: true,
@@ -55,7 +56,6 @@ export const getStationBoard = async (req: Request, res: Response) => {
       },
     });
     const arrivals = await dbClient.arrivals(stationId, {
-      duration: minutes,
       products: {
         nationalExpress: true,
         national: true,
@@ -69,16 +69,23 @@ export const getStationBoard = async (req: Request, res: Response) => {
         ferry: false,
       },
     });
-    console.log("Raw departures:", departures);
-    console.log("Raw arrivals:", arrivals);
     const departuresArray = Array.isArray(departures.departures)
       ? departures.departures
       : [];
     const arrivalsArray = Array.isArray(arrivals.arrivals)
       ? arrivals.arrivals
       : [];
+    console.log(
+      `Fetched ${departuresArray.length} departures and ${arrivalsArray.length} arrivals`
+    );
+    const filteredDepartures = filterByDuration(departuresArray, duration);
+    const filteredArrivals = filterByDuration(arrivalsArray, duration);
+    console.log(
+      `Filtered to ${filteredDepartures.length} departures and ${filteredArrivals.length} arrivals within ${duration} minutes`
+    );
+
     res.json({
-      departures: departuresArray.map((d: any) => ({
+      departures: filteredDepartures.map((d: any) => ({
         tripId: d.tripId,
         when: d.when,
         plannedWhen: d.plannedWhen,
@@ -97,7 +104,7 @@ export const getStationBoard = async (req: Request, res: Response) => {
             }
           : undefined,
       })),
-      arrivals: arrivalsArray.map((a: any) => ({
+      arrivals: filteredArrivals.map((a: any) => ({
         tripId: a.tripId,
         when: a.when,
         plannedWhen: a.plannedWhen,

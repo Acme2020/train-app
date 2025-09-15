@@ -5,8 +5,6 @@ import { fetchStationSuggestions } from '../api'
 interface StationSuggestion {
   id: string
   name: string
-  latitude?: number
-  longitude?: number
 }
 
 const search = ref('')
@@ -34,7 +32,7 @@ function debounce(func: (...args: string[]) => void, delay: number) {
 
 // Debounced function for fetching station suggestions
 const fetchSuggestions = debounce(async (val: string) => {
-  if (!val || val.length < 2) {
+  if (!val) {
     suggestions.value = []
     return
   }
@@ -49,7 +47,7 @@ const fetchSuggestions = debounce(async (val: string) => {
   } finally {
     loading.value = false
   }
-}, 300) // Adjust the debounce delay as needed (300ms in this case)
+}, 200)
 
 // Watch search input and call the debounced function
 watch(search, (val) => {
