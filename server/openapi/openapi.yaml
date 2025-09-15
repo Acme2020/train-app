@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  title: Train Station API
+  version: 1.0.0
+  description: REST API for station search, departures, arrivals, and station board info.
+servers:
+  - url: http://localhost:3000
+    description: Local server
+paths:
+  /api/stations/autocomplete:
+    get:
+      summary: Autocomplete stations by name
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: Search query for station name
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Max number of results (default 5)
+      responses:
+        "200":
+          description: List of matching stations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Station"
+  /api/stations/{stationId}/board:
+    get:
+      summary: Get departures and arrivals for a specific station
+      parameters:
+        - in: path
+          name: stationId
+          schema:
+            type: string
+          required: true
+          description: The station EVA ID (e.g., 8000261 for München Hbf)
+        - in: query
+          name: minutes
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Minutes ahead to show departures and arrivals for (default 10)
+      responses:
+        "200":
+          description: Object containing arrays of departures and arrivals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  departures:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Departure"
+                  arrivals:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Arrival"
+components:
+  schemas:
+    Station:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+    Departure:
+      type: object
+      properties:
+        tripId:
+          type: string
+        when:
+          type: string
+          format: date-time
+        plannedWhen:
+          type: string
+          format: date-time
+        delay:
+          type: integer
+          nullable: true
+        platform:
+          type: string
+          nullable: true
+        direction:
+          type: string
+        line:
+          $ref: "#/components/schemas/Line"
+        stop:
+          $ref: "#/components/schemas/Station"
+    Arrival:
+      type: object
+      properties:
+        tripId:
+          type: string
+        when:
+          type: string
+          format: date-time
+        plannedWhen:
+          type: string
+          format: date-time
+        delay:
+          type: integer
+          nullable: true
+        platform:
+          type: string
+          nullable: true
+        direction:
+          type: string
+        line:
+          $ref: "#/components/schemas/Line"
+        stop:
+          $ref: "#/components/schemas/Station"
+    Line:
+      type: object
+      properties:
+        name:
+          type: string
+        productName:
+          type: string
