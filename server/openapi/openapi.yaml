@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Train Station API
+  title: Train App API
   version: 1.0.0
   description: REST API for station search, departures, arrivals, and station board info.
 servers:
