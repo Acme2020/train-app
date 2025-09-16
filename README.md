@@ -62,7 +62,7 @@ This command:
   Get arrivals and departures for a station
 - For API documentation, refer to the [OpenAPI specification](server/openapi/openapi.yaml).
 
-## Scripts
+## Scripts (from root)
 
 - `yarn start` – Starts the application locally by running both client and server in development mode
 - `yarn start:server` – Start the server locally in development mode
