@@ -2,28 +2,35 @@ import { Request, Response } from "express";
 import { createClient } from "db-vendo-client";
 import { profile } from "db-vendo-client/p/db/index.js";
 import { filterByDuration } from "../utils/filterByDuration";
+import { BoardResponse } from "../../../shared/types";
+
 const dbClient = createClient(profile, "train-app/1.0.0");
 
 // Handler for /api/stations/autocomplete
 export const autocompleteStations = async (req: Request, res: Response) => {
   const query = req.query.q as string;
   const limit = req.query.limit ? Number(req.query.limit) : 5;
+
   if (!query) {
     return res.status(400).json({ error: "Missing query parameter q" });
   }
+
   try {
-    const stations = await dbClient.locations(query, {
+    const locations = await dbClient.locations(query, {
       results: limit,
       fuzzy: true,
       poi: false,
       addresses: false,
+      stops: true,
     });
-    const mapped = stations
+
+    const mapped = locations
       .filter((s: any) => s.type === "station")
       .map((s: any) => ({
         id: s.id,
         name: s.name,
       }));
+
     res.json(mapped);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch stations", details: err });
@@ -34,57 +41,40 @@ export const autocompleteStations = async (req: Request, res: Response) => {
 export const getStationBoard = async (req: Request, res: Response) => {
   const stationId = req.params.stationId;
   const duration = req.query.duration ? Number(req.query.duration) : 10;
+  const products = {
+    nationalExpress: true,
+    national: true,
+    regionalExpress: true,
+    regional: true,
+    suburban: false,
+    subway: false,
+    bus: false,
+    taxi: false,
+    tram: false,
+    ferry: false,
+  };
   if (!stationId) {
     return res.status(400).json({ error: "Missing stationId" });
   }
   try {
-    console.log(
-      `Fetching board for stationId: ${stationId} with duration: ${duration}`
-    );
     const departures = await dbClient.departures(stationId, {
-      products: {
-        nationalExpress: true,
-        national: true,
-        regionalExpress: true,
-        regional: true,
-        suburban: false,
-        subway: false,
-        bus: false,
-        taxi: false,
-        tram: false,
-        ferry: false,
-      },
+      products,
     });
     const arrivals = await dbClient.arrivals(stationId, {
-      products: {
-        nationalExpress: true,
-        national: true,
-        regionalExpress: true,
-        regional: true,
-        suburban: false,
-        subway: false,
-        bus: false,
-        taxi: false,
-        tram: false,
-        ferry: false,
-      },
+      products,
     });
-    const departuresArray = Array.isArray(departures.departures)
-      ? departures.departures
-      : [];
-    const arrivalsArray = Array.isArray(arrivals.arrivals)
-      ? arrivals.arrivals
-      : [];
-    console.log(
-      `Fetched ${departuresArray.length} departures and ${arrivalsArray.length} arrivals`
+    /**
+     * Note: The db profile always returns results for a fixed duration of 60 minutes.
+     * To support custom durations from the client, we filter the results here.
+     * This is a workaround and not ideal, but it ensures correct data for now.
+     */
+    const filteredDepartures = filterByDuration(
+      departures.departures,
+      duration
     );
-    const filteredDepartures = filterByDuration(departuresArray, duration);
-    const filteredArrivals = filterByDuration(arrivalsArray, duration);
-    console.log(
-      `Filtered to ${filteredDepartures.length} departures and ${filteredArrivals.length} arrivals within ${duration} minutes`
-    );
+    const filteredArrivals = filterByDuration(arrivals.arrivals, duration);
 
-    res.json({
+    const response: BoardResponse = {
       departures: filteredDepartures.map((d: any) => ({
         tripId: d.tripId,
         when: d.when,
@@ -92,17 +82,8 @@ export const getStationBoard = async (req: Request, res: Response) => {
         delay: d.delay,
         platform: d.platform,
         direction: d.direction,
-        line: d.line
-          ? { name: d.line.name, productName: d.line.productName }
-          : undefined,
-        stop: d.stop
-          ? {
-              id: d.stop.id,
-              name: d.stop.name,
-              latitude: d.stop.location?.latitude,
-              longitude: d.stop.location?.longitude,
-            }
-          : undefined,
+        line: d.line?.name ?? "",
+        stop: d.stop?.name ?? "",
       })),
       arrivals: filteredArrivals.map((a: any) => ({
         tripId: a.tripId,
@@ -111,19 +92,11 @@ export const getStationBoard = async (req: Request, res: Response) => {
         delay: a.delay,
         platform: a.platform,
         direction: a.direction,
-        line: a.line
-          ? { name: a.line.name, productName: a.line.productName }
-          : undefined,
-        stop: a.stop
-          ? {
-              id: a.stop.id,
-              name: a.stop.name,
-              latitude: a.stop.location?.latitude,
-              longitude: a.stop.location?.longitude,
-            }
-          : undefined,
+        line: a.line?.name ?? "",
+        stop: a.stop?.name ?? "",
       })),
-    });
+    };
+    res.json(response);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch board", details: err });
   }

@@ -1,25 +1,21 @@
 <script setup lang="ts">
 import { ref, watch, defineEmits } from 'vue'
 import { fetchStationSuggestions } from '../api'
-
-interface StationSuggestion {
-  id: string
-  name: string
-}
+import type { Station } from '../../../shared/types'
 
 const search = ref('')
-const suggestions = ref<StationSuggestion[]>([])
+const suggestions = ref<Station[]>([])
 const loading = ref(false)
 
 // Emit event to parent when a station is selected
 const emit = defineEmits<{
-  (e: 'update:selectedStation', stationId: string | null): void
+  (e: 'update:selectedStation', station: Station | null): void
 }>()
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Custom debounce function
-function debounce(func: (...args: string[]) => void, delay: number) {
+// Debounce function
+const debounce = (func: (...args: string[]) => void, delay: number) => {
   return (...args: unknown[]) => {
     if (debounceTimeout) {
       clearTimeout(debounceTimeout)
@@ -40,7 +36,6 @@ const fetchSuggestions = debounce(async (val: string) => {
   loading.value = true
   try {
     const { data } = await fetchStationSuggestions(val)
-    console.log('Suggestions received:', data)
     suggestions.value = data
   } catch (err) {
     console.error('Error fetching suggestions:', err)
@@ -48,7 +43,7 @@ const fetchSuggestions = debounce(async (val: string) => {
   } finally {
     loading.value = false
   }
-}, 300)
+}, 200)
 
 // Watch search input and call the debounced function
 watch(search, (val) => {
@@ -65,20 +60,16 @@ watch(search, (val) => {
     clearable
     :items="suggestions"
     item-title="name"
-    item-value="id"
+    return-object
+    no-filter
     :loading="loading"
-    :return-object="false"
-    @update:search="fetchSuggestions"
+    v-model:search="search"
     hide-no-data
     menu-icon=""
     persistent-placeholder
     hide-details="auto"
     style="max-width: 500px"
-    @update:model-value="
-      (value) => {
-        emit('update:selectedStation', value)
-      }
-    "
+    @update:model-value="(station) => emit('update:selectedStation', station)"
   >
     <template #prepend-inner>
       <v-icon icon="mdi-magnify" />

@@ -29,7 +29,7 @@ watch(
 
 // Emit changes
 watch(localValue, (val) => {
-  emit('update:duration', val)
+  emit('update:duration', Number(val))
 })
 </script>
 

@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import StationSearch from './components/StationSearch.vue'
 import StationDetails from './components/StationDetails.vue'
 import DurationInput from './components/DurationInput.vue'
+import type { Station } from '../../shared/types'
 
-const selectedStation = ref<string | null>(null)
+const selectedStation = ref<Station | null>(null)
 const duration = ref(10) // Default duration in minutes
 const isLoading = ref(false) // Track loading state
 </script>
@@ -15,11 +16,11 @@ const isLoading = ref(false) // Track loading state
     <div v-if="isLoading" class="loading-overlay">
       <v-progress-circular size="96" color="secondary" indeterminate></v-progress-circular>
     </div>
-  <v-app-bar color="surface" flat>
-    <v-spacer />
-    <img src="/logo.svg" alt="Bahnhof Finder" style="height:72px" />
-    <v-spacer />
-  </v-app-bar>
+    <v-app-bar color="surface" flat>
+      <v-spacer />
+      <img src="/logo.svg" alt="Bahnhof Finder" style="height: 72px" />
+      <v-spacer />
+    </v-app-bar>
     <v-main>
       <div
         style="
@@ -30,14 +31,14 @@ const isLoading = ref(false) // Track loading state
           margin-top: 100px;
           margin-bottom: 16px;
           padding: 0 16px;
-          min-height: 90px
+          min-height: 90px;
         "
       >
         <StationSearch @update:selectedStation="selectedStation = $event" />
         <DurationInput :duration="duration" @update:duration="duration = $event" />
       </div>
       <StationDetails
-        :stationId="selectedStation"
+        :station="selectedStation"
         :duration="duration"
         @loading="isLoading = $event"
       />

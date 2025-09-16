@@ -2,22 +2,10 @@
 import { ref, defineProps, defineEmits, watch } from 'vue'
 import { fetchStationDetails } from '../api'
 import BoardTable from './BoardTable.vue'
-
-interface BoardEntry {
-  tripId: string
-  when: string
-  plannedWhen: string
-  delay: number | null
-  platform: string | null
-  direction: string | null
-  line?: { name: string; productName: string }
-  stop?: { id: string; name: string; latitude?: number; longitude?: number }
-  stopName?: string
-  lineName?: string
-}
+import type { BoardEntry, Station } from '../../../shared/types'
 
 const props = defineProps<{
-  stationId: string | null
+  station: Station | null
   duration?: number
 }>()
 
@@ -29,42 +17,31 @@ const arrivals = ref<BoardEntry[]>([])
 const departures = ref<BoardEntry[]>([])
 const loading = ref(false)
 
+const fetchBoard = async (id: string, minutes = 5) => {
+  loading.value = true
+  emit('loading', true)
+  try {
+    const { data } = await fetchStationDetails(id, minutes)
+    arrivals.value = data.arrivals
+    departures.value = data.departures
+  } catch {
+    arrivals.value = []
+    departures.value = []
+  } finally {
+    loading.value = false
+    emit('loading', false)
+  }
+}
+
 watch(
-  () => [props.stationId, props.duration],
-  async ([newStationId, newDuration]) => {
-    if (!newStationId) {
+  [() => props.station, () => props.duration],
+  async ([newStation, newDuration]) => {
+    if (!newStation) {
       arrivals.value = []
       departures.value = []
       return
     }
-
-    loading.value = true
-    emit('loading', true) // Emit loading state to parent
-
-    try {
-      const { data } = await fetchStationDetails(newStationId, newDuration)
-      arrivals.value = Array.isArray(data.arrivals)
-        ? data.arrivals.map((a: BoardEntry) => ({
-            ...a,
-            stopName: a.stop?.name || '',
-            lineName: a.line?.name || '',
-          }))
-        : []
-      departures.value = Array.isArray(data.departures)
-        ? data.departures.map((d: BoardEntry) => ({
-            ...d,
-            stopName: d.stop?.name || '',
-            lineName: d.line?.name || '',
-          }))
-        : []
-    } catch (err) {
-      console.error('Error fetching station details:', err)
-      arrivals.value = []
-      departures.value = []
-    } finally {
-      loading.value = false
-      emit('loading', false)
-    }
+    await fetchBoard(newStation.id, newDuration ?? 5)
   },
   { immediate: true },
 )
