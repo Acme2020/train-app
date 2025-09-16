@@ -7,8 +7,10 @@
     "start:server": "tsx server/src/server.ts",
     "start:client": "cd client && vite",
     "start": "concurrently \"yarn run start:server\" \"yarn run start:client\"",
-    "test": "vitest run "
-
+    "test": "yarn test:server",
+    "test:server": "cd server && vitest run",
+    "test:client": "cd client && vitest run",
+    "generate:server": "npx openapi-typescript-codegen --input server/openapi/openapi.yaml --output server/src/generated --client none"
   },
   "workspaces": [
     "server",

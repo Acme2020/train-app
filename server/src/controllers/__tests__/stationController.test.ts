@@ -9,11 +9,53 @@ vi.mock("db-vendo-client", () => {
       locations: vi.fn(async (query, options) => {
         if (query === "Berlin") {
           return [
-            { id: "8011160", name: "Berlin Hbf", type: "station" },
-            { id: "8010404", name: "Berlin Südkreuz", type: "station" },
-            { id: "8089100", name: "Berlin Ostbahnhof", type: "station" },
-            { id: "8011162", name: "Berlin Friedrichstraße", type: "station" },
-            { id: "8010255", name: "Berlin Alexanderplatz", type: "station" },
+            { 
+              id: "8011160", 
+              name: "Berlin Hbf", 
+              type: "station",
+              products: {
+                nationalExpress: true,
+                national: true,
+                regionalExpress: true,
+                regional: true
+              }
+            },
+            { 
+              id: "8010404", 
+              name: "Berlin Südkreuz", 
+              type: "station",
+              products: {
+                nationalExpress: true,
+                national: true
+              }
+            },
+            { 
+              id: "8089100", 
+              name: "Berlin Ostbahnhof", 
+              type: "station",
+              products: {
+                nationalExpress: true,
+                national: true
+              }
+            },
+            { 
+              id: "8011162", 
+              name: "Berlin Friedrichstraße", 
+              type: "station",
+              products: {
+                regionalExpress: true,
+                regional: true
+              }
+            },
+            { 
+              id: "8010255", 
+              name: "Berlin Alexanderplatz", 
+              type: "station",
+              products: {
+                regionalExpress: true,
+                regional: true
+              }
+            },
           ];
         } else if (query === "error") {
           throw new Error("API error");
