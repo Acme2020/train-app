@@ -33,23 +33,13 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 3. **Start both servers (from root):**
 
    ```sh
-   yarn dev
+   yarn start
    ```
 
    - Backend: http://localhost:3000
    - Frontend: http://localhost:5173
 
    (Runs both client and server concurrently.)
-
-4. **Individual workspace commands:**
-   - **Client:**
-     ```sh
-     yarn workspace client dev
-     ```
-   - **Server:**
-     ```sh
-     yarn workspace server dev
-     ```
 
 ## API Endpoints
 
