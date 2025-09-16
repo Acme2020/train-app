@@ -8,7 +8,7 @@ import type { Station } from '../models/Station';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class DefaultService {
+export class StationsService {
     /**
      * Autocomplete stations by name
      * @param q Search query for station name

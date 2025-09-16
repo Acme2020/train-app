@@ -25,8 +25,9 @@ export const autocompleteStations = async (req: Request, res: Response) => {
     });
 
     /**
-     * Note: The db profile does not allow filtering by products.
-     * As only stations that serve trains are relevant, we filter them here.
+     * The underlying API profile for `locations` does not support filtering by product.
+     * To ensure relevance, we manually filter the results to include only stations
+     * that serve mainline or regional trains. Stations without product information are excluded.
      * This is a workaround and not ideal, but it ensures correct data for now.
      */
     const servesTrains = (p: any) =>
@@ -39,7 +40,11 @@ export const autocompleteStations = async (req: Request, res: Response) => {
     // Only return stations, map to Station type and filter to only those that serve trains
     const filtered = locations
       .filter((l: any) => l.type === "station" && servesTrains(l.products))
-      .map((l: any) => ({ id: l.id, name: l.name }));
+      .map((l: any) => ({
+        id: l.id,
+        name: l.name,
+      }));
+
     res.json(filtered);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch stations", details: err });

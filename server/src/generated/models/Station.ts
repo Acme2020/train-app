@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Station = {
-    id?: string;
-    name?: string;
+    id: string;
+    name: string;
     latitude?: number;
     longitude?: number;
 };

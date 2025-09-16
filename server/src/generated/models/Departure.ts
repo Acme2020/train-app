@@ -5,13 +5,13 @@
 import type { Line } from './Line';
 import type { Station } from './Station';
 export type Departure = {
-    tripId?: string;
-    when?: string;
-    plannedWhen?: string;
+    tripId: string;
+    when: string;
+    plannedWhen: string;
     delay?: number | null;
     platform?: string | null;
-    direction?: string;
-    line?: Line;
-    stop?: Station;
+    direction: string;
+    line: Line;
+    stop: Station;
 };
 

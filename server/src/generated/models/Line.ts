@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Line = {
-    name?: string;
+    name: string;
     productName?: string;
 };
 

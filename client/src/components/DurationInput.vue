@@ -14,7 +14,7 @@ const localValue = ref(props.duration)
 
 // Define validation rules
 const rules = [
-  (v: number) => v >= 5 || 'Der Wert muss mindestens 1 Minute betragen.',
+  (v: number) => v >= 1 || 'Der Wert muss mindestens 1 Minute betragen.',
   (v: number) => v <= 60 || 'Der Wert darf maximal 60 Minuten betragen.',
 ]
 

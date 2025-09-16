@@ -12,4 +12,4 @@ export type { Departure } from './models/Departure';
 export type { Line } from './models/Line';
 export type { Station } from './models/Station';
 
-export { DefaultService } from './services/DefaultService';
+export { StationsService } from './services/StationsService';
