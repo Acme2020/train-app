@@ -53,7 +53,7 @@ watch(
 </script>
 
 <template>
-  <v-container style="padding: 50px">
+  <v-container class="py-0">
     <div v-if="!loading">
       <h2 class="mb-2">Abfahrten</h2>
       <BoardTable :entries="departures" type="Abfahrt" />

@@ -57,9 +57,10 @@ const clearError = () => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   gap: 16px;
   margin-top: 15px;
+  min-height: 120px;
   background-color: var(--v-surface-base);
 }
 </style>
