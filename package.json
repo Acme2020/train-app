@@ -4,13 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:server": "tsx server/src/server.ts",
-    "dev:client": "cd client && vite",
-    "dev": "concurrently \"yarn run dev:server\" \"yarn run dev:client\"",
-    "build": "tsc && vite build --config client/vite.config.ts",
-    "start": "node server/dist/server.js",
-    "test:server": "vitest run server/src/**/*.test.ts",
-    "generate:server": "npx openapi-typescript-codegen --input server/openapi/openapi.yaml --output server/src/generated --client none"
+    "start:server": "tsx server/src/server.ts",
+    "start:client": "cd client && vite",
+    "start": "concurrently \"yarn run dev:server\" \"yarn run dev:client\"",
+    "test": "vitest run "
+
   },
   "workspaces": [
     "server",

@@ -61,7 +61,10 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 
 ## Scripts
 
-- `yarn dev` – Start both client and server in development mode
+- `yarn start` – Starts the application locally by running both client and server in development mode.
+- `yarn start:server` – Start the server locally in development mode
+- `yarn start:client` – Start the client locally in development mode
+- `yarn test` – Run all tests in the repository
 - `yarn workspace client <script>` – Run client-specific scripts
 - `yarn workspace server <script>` – Run server-specific scripts
 
