@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, watch } from 'vue'
+import { ref, defineProps, defineEmits, watch } from 'vue'
 import { fetchStationDetails } from '../api'
 import BoardTable from './BoardTable.vue'
 
@@ -21,6 +21,10 @@ const props = defineProps<{
   duration?: number
 }>()
 
+const emit = defineEmits<{
+  (e: 'loading', value: boolean): void
+}>()
+
 const arrivals = ref<BoardEntry[]>([])
 const departures = ref<BoardEntry[]>([])
 const loading = ref(false)
@@ -33,7 +37,10 @@ watch(
       departures.value = []
       return
     }
+
     loading.value = true
+    emit('loading', true) // Emit loading state to parent
+
     try {
       const { data } = await fetchStationDetails(newStationId, newDuration)
       arrivals.value = Array.isArray(data.arrivals)
@@ -56,6 +63,7 @@ watch(
       departures.value = []
     } finally {
       loading.value = false
+      emit('loading', false)
     }
   },
   { immediate: true },
@@ -63,11 +71,12 @@ watch(
 </script>
 
 <template>
-  <v-container>
-    <v-progress-circular v-if="loading" indeterminate color="primary" />
-    <h2 v-if="!loading">Abfahrten</h2>
-    <BoardTable v-if="!loading" :entries="departures" type="Abfahrt" />
-    <h2 v-if="!loading">Ankünfte</h2>
-    <BoardTable v-if="!loading" :entries="arrivals" type="Ankunft" />
+  <v-container style="padding: 50px">
+    <div v-if="!loading">
+      <h2 class="mb-2">Abfahrten</h2>
+      <BoardTable :entries="departures" type="Abfahrt" />
+      <h2 class="pt-6 mb-2">Ankünfte</h2>
+      <BoardTable :entries="arrivals" type="Ankunft" />
+    </div>
   </v-container>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import { useTheme } from 'vuetify'
 
 interface BoardEntry {
   tripId: string
@@ -26,6 +27,11 @@ const headers = [
   { title: 'Richtung', key: 'direction', width: 200 },
   { title: 'Verspätung', key: 'delay', width: 120 },
 ]
+
+// Access current Vuetify theme colors
+const theme = useTheme()
+const errorColor = theme.current.value.colors.error
+const successColor = theme.current.value.colors.success
 </script>
 
 <template>
@@ -35,29 +41,19 @@ const headers = [
     item-value="tripId"
     height="300"
     fixed-header
-    class="mt-4 pb-12"
   >
     <!-- Format Zeit -->
     <template #item.when="{ item }">
       {{ new Date(item.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
     </template>
 
-    <!-- Delay formatting with colors -->
+    <!-- Delay formatting using theme colors -->
     <template #item.delay="{ item }">
-      <span :class="item.delay && item.delay > 0 ? 'text-danger' : 'text-success'">
-        {{ item.delay !== null ? (item.delay > 0 ? `+${item.delay} Min.` : 'pünktlich') : '' }}
+      <span v-if="item.delay && item.delay > 0" :style="{ color: errorColor }">
+        +{{ item.delay }} min
       </span>
+      <span v-else-if="item.delay === 0" :style="{ color: successColor }"> pünktlich </span>
+      <span v-else :style="{ color: errorColor }"> &mdash; </span>
     </template>
   </v-data-table-virtual>
 </template>
-
-<style scoped>
-.text-danger {
-  color: red;
-  font-weight: 500;
-}
-.text-success {
-  color: green;
-  font-weight: 500;
-}
-</style>

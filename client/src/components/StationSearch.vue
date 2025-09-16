@@ -40,6 +40,7 @@ const fetchSuggestions = debounce(async (val: string) => {
   loading.value = true
   try {
     const { data } = await fetchStationSuggestions(val)
+    console.log('Suggestions received:', data)
     suggestions.value = data
   } catch (err) {
     console.error('Error fetching suggestions:', err)
@@ -47,7 +48,7 @@ const fetchSuggestions = debounce(async (val: string) => {
   } finally {
     loading.value = false
   }
-}, 200)
+}, 300)
 
 // Watch search input and call the debounced function
 watch(search, (val) => {
@@ -56,25 +57,31 @@ watch(search, (val) => {
 </script>
 
 <template>
-  <v-container style="max-width: 600px; margin: 0 auto; padding-top: 32px">
-    <v-autocomplete
-      v-model:search="search"
-      label="Bahnhof suchen..."
-      variant="outlined"
-      density="compact"
-      clearable
-      :items="suggestions"
-      item-title="name"
-      item-value="id"
-      :loading="loading"
-      hide-no-data
-      hide-selected
-      @update:model-value="
-        (value) => {
-          console.log('Emitted value:', value) // Log the emitted value
-          emit('update:selectedStation', value)
-        }
-      "
-    />
-  </v-container>
+  <v-autocomplete
+    label="Bahnhof suchen..."
+    placeholder="Geben Sie den Namen eines Bahnhofs ein"
+    variant="outlined"
+    density="compact"
+    clearable
+    :items="suggestions"
+    item-title="name"
+    item-value="id"
+    :loading="loading"
+    :return-object="false"
+    @update:search="fetchSuggestions"
+    hide-no-data
+    menu-icon=""
+    persistent-placeholder
+    hide-details="auto"
+    style="max-width: 500px"
+    @update:model-value="
+      (value) => {
+        emit('update:selectedStation', value)
+      }
+    "
+  >
+    <template #prepend-inner>
+      <v-icon icon="mdi-magnify" />
+    </template>
+  </v-autocomplete>
 </template>
