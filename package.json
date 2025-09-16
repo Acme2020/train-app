@@ -6,7 +6,7 @@
   "scripts": {
     "start:server": "tsx server/src/server.ts",
     "start:client": "cd client && vite",
-    "start": "concurrently \"yarn run dev:server\" \"yarn run dev:client\"",
+    "start": "concurrently \"yarn run start:server\" \"yarn run start:client\"",
     "test": "vitest run "
 
   },
