@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps<{
   duration: number
@@ -27,9 +27,16 @@ watch(
   },
 )
 
-// Emit changes
+// Check if all rules pass
+const isValid = computed(() => {
+  return rules.every((rule) => rule(localValue.value) === true)
+})
+
+// Emit changes only if valid
 watch(localValue, (val) => {
-  emit('update:duration', Number(val))
+  if (isValid.value) {
+    emit('update:duration', Number(val))
+  }
 })
 </script>
 

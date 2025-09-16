@@ -4,12 +4,16 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "server/dist",
-    "rootDir": "server/src",
+    "rootDir": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["shared/*"]
+    }
   },
-  "include": ["server/src", "client/src"],
+  "include": ["server/src", "client/src", "shared"],
   "exclude": ["node_modules", "dist"]
 }
