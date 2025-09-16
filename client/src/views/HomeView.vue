@@ -27,7 +27,7 @@ const clearError = () => {
   <!-- Loading overlay -->
   <LoadingOverlay :loading="isLoading" full-page />
 
-  <!-- Error message area (always reserved in layout) -->
+  <!-- Error message area -->
   <div class="error-area">
     <ErrorMessage :message="error" dismissable @dismiss="clearError" />
   </div>

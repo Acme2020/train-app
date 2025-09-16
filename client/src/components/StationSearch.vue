@@ -8,7 +8,7 @@ const search = ref('')
 const suggestions = ref<Station[]>([])
 const loading = ref(false)
 
-// Emit event to parent when a station is selected
+// Emit event to parent when a station is selected or an error occurs
 const emit = defineEmits<{
   (e: 'update:selectedStation', station: Station | null): void
   (e: 'error', message: string): void
@@ -47,6 +47,7 @@ const fetchSuggestions = debounce(async (val: string) => {
   } finally {
     loading.value = false
   }
+  // Small delay added to wait for user to stop typing
 }, 200)
 
 // Watch search input and call the debounced function

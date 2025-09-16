@@ -44,7 +44,7 @@ const successColor = theme.current.value.colors.success
         +{{ item.delay }} min
       </span>
       <span v-else-if="item.delay === 0" :style="{ color: successColor }"> pünktlich </span>
-      <span v-else :style="{ color: errorColor }"> &mdash; </span>
+      <span v-else> &mdash; </span>
     </template>
 
     <!-- Custom "no data" message -->

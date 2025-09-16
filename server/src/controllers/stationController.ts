@@ -9,7 +9,7 @@ const dbClient = createClient(profile, "train-app/1.0.0");
 // Handler for /api/stations/autocomplete
 export const autocompleteStations = async (req: Request, res: Response) => {
   const query = req.query.q as string;
-  const limit = req.query.limit ? Number(req.query.limit) : 5;
+  const limit = 25;
 
   if (!query) {
     return res.status(400).json({ error: "Missing query parameter q" });
@@ -24,14 +24,23 @@ export const autocompleteStations = async (req: Request, res: Response) => {
       stops: true,
     });
 
-    const mapped = locations
-      .filter((s: any) => s.type === "station")
-      .map((s: any) => ({
-        id: s.id,
-        name: s.name,
-      }));
-
-    res.json(mapped);
+    /**
+     * Note: The db profile does not allow filtering by products.
+     * As only stations that serve trains are relevant, we filter them here.
+     * This is a workaround and not ideal, but it ensures correct data for now.
+     */
+    const servesTrains = (p: any) =>
+      !!(
+        p?.nationalExpress ||
+        p?.national ||
+        p?.regionalExpress ||
+        p?.regional
+      );
+    // Only return stations, map to Station type and filter to only those that serve trains
+    const filtered = locations
+      .filter((l: any) => l.type === "station" && servesTrains(l.products))
+      .map((l: any) => ({ id: l.id, name: l.name }));
+    res.json(filtered);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch stations", details: err });
   }

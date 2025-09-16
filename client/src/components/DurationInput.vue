@@ -14,7 +14,7 @@ const localValue = ref(props.duration)
 
 // Define validation rules
 const rules = [
-  (v: number) => v >= 5 || 'Der Wert muss mindestens 5 Minuten betragen.',
+  (v: number) => v >= 5 || 'Der Wert muss mindestens 1 Minute betragen.',
   (v: number) => v <= 60 || 'Der Wert darf maximal 60 Minuten betragen.',
 ]
 
@@ -46,7 +46,7 @@ watch(localValue, (val) => {
     v-model="localValue"
     label="Zeitraum (Minuten)"
     type="number"
-    :min="5"
+    :min="1"
     :max="60"
     :step="1"
     variant="outlined"

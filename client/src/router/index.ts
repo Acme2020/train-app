@@ -9,7 +9,6 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
     },
-    // Add more routes as needed
   ],
 })
 

@@ -6,10 +6,15 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local server
+tags:
+  - name: Stations
+    description: Operations related to train stations
 paths:
   /api/stations/autocomplete:
     get:
       summary: Autocomplete stations by name
+      tags:
+        - Stations
       parameters:
         - in: query
           name: q
@@ -21,7 +26,6 @@ paths:
           name: limit
           schema:
             type: integer
-          required: false
           description: Max number of results (default 5)
       responses:
         "200":
@@ -35,6 +39,8 @@ paths:
   /api/stations/{stationId}/board:
     get:
       summary: Get departures and arrivals for a specific station
+      tags:
+        - Stations
       parameters:
         - in: path
           name: stationId
@@ -47,7 +53,6 @@ paths:
           schema:
             type: integer
             default: 10
-          required: false
           description: Minutes ahead to show departures and arrivals for (default 10)
       responses:
         "200":

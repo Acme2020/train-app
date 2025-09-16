@@ -1,7 +1,8 @@
 <script setup lang="ts">
-// Component props
+// Define props
 defineProps<{
   loading: boolean
+  // Optional prop to make overlay cover full page
   fullPage?: boolean
 }>()
 </script>

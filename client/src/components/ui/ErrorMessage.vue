@@ -19,7 +19,6 @@ const emit = defineEmits<{
       class="centered-alert"
       closable
       icon="mdi-alert-circle"
-      :close-label="dismissable ? 'Dismiss' : undefined"
       @click:close="emit('dismiss')"
     >
       {{ message }}

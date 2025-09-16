@@ -19,7 +19,7 @@ const arrivals = ref<BoardEntry[]>([])
 const departures = ref<BoardEntry[]>([])
 const loading = ref(false)
 // Function to fetch board data
-const fetchBoard = async (id: string, minutes = 5) => {
+const fetchBoard = async (id: string, minutes = 10) => {
   loading.value = true
   emit('loading', true)
   try {
@@ -46,7 +46,7 @@ watch(
       departures.value = []
       return
     }
-    await fetchBoard(newStation.id, newDuration ?? 5)
+    await fetchBoard(newStation.id, newDuration ?? 10)
   },
   { immediate: true },
 )
