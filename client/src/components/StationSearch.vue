@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, defineEmits } from 'vue'
 import { fetchStationSuggestions } from '../api'
-import type { Station } from '../../../shared/types'
+import { formatApiError } from '../utils/errorHandling'
+import type { Station } from '@shared/types'
 
 const search = ref('')
 const suggestions = ref<Station[]>([])
@@ -10,11 +11,12 @@ const loading = ref(false)
 // Emit event to parent when a station is selected
 const emit = defineEmits<{
   (e: 'update:selectedStation', station: Station | null): void
+  (e: 'error', message: string): void
 }>()
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Debounce function
+// Debounce function to limit API calls
 const debounce = (func: (...args: string[]) => void, delay: number) => {
   return (...args: unknown[]) => {
     if (debounceTimeout) {
@@ -32,7 +34,6 @@ const fetchSuggestions = debounce(async (val: string) => {
     suggestions.value = []
     return
   }
-
   loading.value = true
   try {
     const { data } = await fetchStationSuggestions(val)
@@ -40,6 +41,9 @@ const fetchSuggestions = debounce(async (val: string) => {
   } catch (err) {
     console.error('Error fetching suggestions:', err)
     suggestions.value = []
+    // Emit error to parent component with formatted error message
+    const errorMessage = formatApiError(err)
+    emit('error', errorMessage)
   } finally {
     loading.value = false
   }
@@ -69,7 +73,7 @@ watch(search, (val) => {
     persistent-placeholder
     hide-details="auto"
     style="max-width: 500px"
-    @update:model-value="(station) => emit('update:selectedStation', station)"
+    @update:model-value="(station: Station) => emit('update:selectedStation', station)"
   >
     <template #prepend-inner>
       <v-icon icon="mdi-magnify" />

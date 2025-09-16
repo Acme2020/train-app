@@ -1,42 +1,122 @@
 # Train App
 
-A simple web application to search for train stations and view upcoming departures and arrivals, built with TypeScript, Vue.js, Vuetify, and a Node.js server.
-
-## Features
-
-- Station search with suggestions
-- View departures and arrivals for a selected station
-- Filter for ICE, EC, IR, and regional trains
-- Modern, responsive UI (Vue + Vuetify)
-
-## Project Structure
-
-- `server/` – TypeScript Node.js REST API
-- `client/` – Vue 3 + Vuetify SPA
-
-## Getting Started
-
-1. Install dependencies:
-   ```sh
-   yarn install
-   ```
-2. Start development servers (concurrently):
-   ```sh
-   yarn dev
-   ```
-   - Server: http://localhost:3000
-   - Client: http://localhost:5173
-
-## Endpoints
-
-- `GET /api/stations?query=...` – Station search
-- `GET /api/station/:id/departures-arrivals?minutes=...` – Departures & arrivals
+A monorepo for a train station board web application.  
+Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 
 ## Requirements
 
-- Node.js 18+
-- Yarn (v1 or v3)
+- **Node.js 22.x** (required)
+- **Yarn** (v1 or v3 recommended)
 
----
+## Project Structure
 
-For more details, see the `task.md` file.
+- `client/` – Vue 3 + Vuetify SPA (frontend)
+- `server/` – TypeScript Node.js REST API (backend)
+- `shared/` – Common TypeScript types (accessed via path aliases)
+- Root – Workspace management, shared scripts
+
+## Code Organization
+
+- **Path Aliases**: 
+  - `@shared/*` - Access shared types from anywhere (e.g., `import type { Station } from '@shared/types'`)
+  - `@/*` - Access client src files (in client components)
+
+## Setup & Development
+
+1. **Clone the repository:**
+
+   ```sh
+   git clone <repository-url>
+   cd train-app
+   ```
+
+2. **Install dependencies (from root):**
+
+   ```sh
+   yarn install
+   ```
+
+3. **Start both servers (from root):**
+
+   ```sh
+   yarn dev
+   ```
+
+   - Backend: http://localhost:3000
+   - Frontend: http://localhost:5173
+
+   (Runs both client and server concurrently.)
+
+4. **Individual workspace commands:**
+   - **Client:**
+     ```sh
+     yarn workspace client dev
+     ```
+   - **Server:**
+     ```sh
+     yarn workspace server dev
+     ```
+
+## API Endpoints
+
+- `GET /api/stations/autocomplete?q=...`  
+  Autocomplete station names (query param: `q`)
+- `GET /api/stations/{stationId}/board?duration=...`  
+  Get arrivals and departures for a station (used by frontend)
+- For API documentation, refer to the [OpenAPI specification](server/openapi/openapi.yaml).
+
+## Scripts
+
+- `yarn dev` – Start both client and server in development mode
+- `yarn build` – Build TypeScript and frontend
+- `yarn start` – Start compiled backend
+- `yarn workspace client <script>` – Run client-specific scripts
+- `yarn workspace server <script>` – Run server-specific scripts
+
+## Notes
+
+- All development and build commands require **Node.js 22.x**.
+- For backend type generation, use:
+
+  ```sh
+  yarn workspace server generate:server
+  ```
+
+## Features
+
+- **Station search with autocomplete** - Find stations easily as you type
+- **Arrival and departure boards** - View upcoming trains at selected stations
+- **Duration filtering** - Control how far in the future to show schedules
+- **Train type filtering** - Focus on ICE, EC, IR, and regional trains
+- **Responsive design** - Works on desktop and mobile devices
+
+### Running the Server on a Different Port
+
+If you need to run the server on a different port:
+
+1. Set the PORT environment variable when starting the server:
+
+   ```
+   PORT=3001 yarn dev:server
+   ```
+
+2. Update the API baseURL in `client/src/api/index.ts` to match your new port:
+
+   ```typescript
+   const api = axios.create({
+     baseURL: "http://localhost:3001/api",
+   });
+   ```
+
+3. Restart both client and server for changes to take effect.
+
+## Troubleshooting
+
+- **404 Error on frontend**: Try running the client directly from its folder with `cd client && yarn dev`
+- **Connection issues**: Make sure both server and client are running (ports 3000 and 5173)
+- **Port conflicts**:
+  - For server: Set `PORT=3001 yarn dev:server` to use port 3001 (server doesn't auto-detect available ports)
+  - For client: Vite automatically finds an available port if 5173 is in use
+  - Remember to update the API baseURL in `client/src/api/index.ts` if you change the server port
+- **Type errors**: Run `yarn workspace client type-check` to verify TypeScript types
+- **Missing dependencies**: Ensure you're using Node.js 22.x and have run `yarn install`

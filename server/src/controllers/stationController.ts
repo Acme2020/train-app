@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { createClient } from "db-vendo-client";
 import { profile } from "db-vendo-client/p/db/index.js";
 import { filterByDuration } from "../utils/filterByDuration";
-import { BoardResponse } from "../../../shared/types";
+import { BoardResponse } from "@shared/types";
 
 const dbClient = createClient(profile, "train-app/1.0.0");
 
@@ -40,7 +40,9 @@ export const autocompleteStations = async (req: Request, res: Response) => {
 // Handler for /api/stations/:stationId/board
 export const getStationBoard = async (req: Request, res: Response) => {
   const stationId = req.params.stationId;
+  //Duration in minutes for arrivals and depatures from now, default to 10 if not provided
   const duration = req.query.duration ? Number(req.query.duration) : 10;
+  //Only enable certain products for the board as per requirements
   const products = {
     nationalExpress: true,
     national: true,
@@ -74,6 +76,7 @@ export const getStationBoard = async (req: Request, res: Response) => {
     );
     const filteredArrivals = filterByDuration(arrivals.arrivals, duration);
 
+    // Map to BoardEntry format
     const response: BoardResponse = {
       departures: filteredDepartures.map((d: any) => ({
         tripId: d.tripId,

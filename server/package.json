@@ -1,0 +1,27 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "generate:server": "npx openapi-typescript-codegen --input openapi/openapi.yaml --output src/generated --client none"
+  },
+  "vitest": {
+    "environment": "node"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "db-vendo-client": "^6.10.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "openapi-typescript-codegen": "^0.29.0"
+  }
+}

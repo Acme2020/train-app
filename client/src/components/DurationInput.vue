@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 
+// Define props
 const props = defineProps<{
   duration: number
 }>()
-
+// Emit event to parent when duration changes
 const emit = defineEmits<{
   (e: 'update:duration', value: number): void
 }>()

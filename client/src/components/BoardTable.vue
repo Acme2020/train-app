@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import { useTheme } from 'vuetify'
-import type { BoardEntry } from '../../../shared/types'
+import type { BoardEntry } from '@shared/types'
 
+// Define props
 const props = defineProps<{
   entries: BoardEntry[]
   type: 'Abfahrt' | 'Ankunft'
 }>()
 
-// headers depend on type (Abfahrt = Nach, Ankunft = Von)
+// Headers depend on type (Abfahrt = Nach, Ankunft = Von)
 const headers = [
   { title: 'Zeit', key: 'when', width: 100 },
   { title: props.type === 'Abfahrt' ? 'Nach' : 'Von', key: 'stop', width: 200 },
