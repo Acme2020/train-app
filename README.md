@@ -99,7 +99,7 @@ If you need to run the server on a different port:
 - **404 Error on frontend**: Try running the client directly from its folder with `cd client && yarn dev`
 - **Connection issues**: Make sure both server and client are running (ports 3000 and 5173)
 - **Port conflicts**:
-  - For server: Set `PORT=3001 yarn dev:server` to use port 3001 (server doesn't auto-detect available ports)
+  - For server: Set `PORT=3001 yarn start:server` to use port 3001 (server doesn't auto-detect available ports)
   - For client: Vite automatically finds an available port if 5173 is in use
   - Remember to update the API baseURL in `client/src/api/index.ts` if you change the server port
 - **Type errors**: Run `yarn workspace client type-check` to verify TypeScript types
