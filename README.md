@@ -15,18 +15,12 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 - `shared/` – Common TypeScript types (accessed via path aliases)
 - Root – Workspace management, shared scripts
 
-## Code Organization
-
-- **Path Aliases**: 
-  - `@shared/*` - Access shared types from anywhere (e.g., `import type { Station } from '@shared/types'`)
-  - `@/*` - Access client src files (in client components)
-
 ## Setup & Development
 
 1. **Clone the repository:**
 
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/Acme2020/train-app
    cd train-app
    ```
 
@@ -62,14 +56,12 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 - `GET /api/stations/autocomplete?q=...`  
   Autocomplete station names (query param: `q`)
 - `GET /api/stations/{stationId}/board?duration=...`  
-  Get arrivals and departures for a station (used by frontend)
+  Get arrivals and departures for a station
 - For API documentation, refer to the [OpenAPI specification](server/openapi/openapi.yaml).
 
 ## Scripts
 
 - `yarn dev` – Start both client and server in development mode
-- `yarn build` – Build TypeScript and frontend
-- `yarn start` – Start compiled backend
 - `yarn workspace client <script>` – Run client-specific scripts
 - `yarn workspace server <script>` – Run server-specific scripts
 
@@ -88,7 +80,6 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 - **Arrival and departure boards** - View upcoming trains at selected stations
 - **Duration filtering** - Control how far in the future to show schedules
 - **Train type filtering** - Focus on ICE, EC, IR, and regional trains
-- **Responsive design** - Works on desktop and mobile devices
 
 ### Running the Server on a Different Port
 
