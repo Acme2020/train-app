@@ -16,6 +16,7 @@
     "client"
   ],
   "dependencies": {
+    "@mdi/js": "^7.4.47",
     "@vueuse/core": "^13.9.0",
     "axios": "^1.12.2",
     "cors": "^2.8.5",

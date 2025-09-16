@@ -55,5 +55,12 @@ const successColor = theme.current.value.colors.success
       <span v-else-if="item.delay === 0" :style="{ color: successColor }"> pünktlich </span>
       <span v-else :style="{ color: errorColor }"> &mdash; </span>
     </template>
+
+    <!-- Custom "no data" message -->
+    <template #no-data>
+      <div style="padding: 16px; text-align: center; color: var(--text)">
+        Keine Einträge gefunden
+      </div>
+    </template>
   </v-data-table-virtual>
 </template>

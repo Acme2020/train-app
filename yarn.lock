@@ -808,6 +808,11 @@
   resolved "https://registry.npmjs.org/@mdi/font/-/font-7.4.47.tgz"
   integrity sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==
 
+"@mdi/js@^7.4.47":
+  version "7.4.47"
+  resolved "https://registry.npmjs.org/@mdi/js/-/js-7.4.47.tgz"
+  integrity sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -4130,6 +4135,7 @@ package-json-from-dist@^1.0.0:
   resolved "file:client"
   dependencies:
     "@mdi/font" "^7.4.47"
+    "@mdi/js" "^7.4.47"
     vite-plugin-vuetify "^2.1.2"
     vue "^3.5.18"
     vue-router "^4.5.1"
