@@ -51,7 +51,7 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 
 ## Scripts
 
-- `yarn start` – Starts the application locally by running both client and server in development mode.
+- `yarn start` – Starts the application locally by running both client and server in development mode
 - `yarn start:server` – Start the server locally in development mode
 - `yarn start:client` – Start the client locally in development mode
 - `yarn test` – Run all tests in the repository
@@ -81,7 +81,7 @@ If you need to run the server on a different port:
 1. Set the PORT environment variable when starting the server:
 
    ```
-   PORT=3001 yarn dev:server
+   PORT=3001 yarn start:server
    ```
 
 2. Update the API baseURL in `client/src/api/index.ts` to match your new port:
