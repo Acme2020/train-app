@@ -1,4 +1,9 @@
-/* generated using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-cod    }: CancelablePromise<{
+        departures?: Array<Departure>;
+        arrivals?: Array<Arrival>;
+    }> {
+        return __request({
+            method: 'GET',- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -20,7 +25,7 @@ export class StationsService {
         q: string,
         limit?: number,
     ): CancelablePromise<Array<Station>> {
-        return __request(OpenAPI, {
+        return __request({
             method: 'GET',
             url: '/api/stations/autocomplete',
             query: {
@@ -43,7 +48,7 @@ export class StationsService {
         departures?: Array<Departure>;
         arrivals?: Array<Arrival>;
     }> {
-        return __request(OpenAPI, {
+        return __request({
             method: 'GET',
             url: '/api/stations/{stationId}/board',
             path: {

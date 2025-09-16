@@ -41,6 +41,19 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 
    (Runs both client and server concurrently.)
 
+## Building for Production
+
+To build the application for production deployment:
+
+```sh
+yarn build
+```
+
+This command:
+
+1. Builds the server TypeScript code into JavaScript in the `server/dist` directory
+2. Builds the client Vue application into optimized assets in the `client/dist` directory
+
 ## API Endpoints
 
 - `GET /api/stations/autocomplete?q=...`  
@@ -54,7 +67,12 @@ Built with TypeScript, Vue 3, Vuetify, and a Node.js backend.
 - `yarn start` – Starts the application locally by running both client and server in development mode
 - `yarn start:server` – Start the server locally in development mode
 - `yarn start:client` – Start the client locally in development mode
+- `yarn build` – Build both server and client for production
+- `yarn build:server` – Build only the server for production
+- `yarn build:client` – Build only the client for production
 - `yarn test` – Run all tests in the repository
+- `yarn test:server` – Run server tests only
+- `yarn test:client` – Run client tests only
 - `yarn workspace client <script>` – Run client-specific scripts
 - `yarn workspace server <script>` – Run server-specific scripts
 
