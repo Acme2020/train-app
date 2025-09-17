@@ -94,6 +94,7 @@ export const getStationBoard = async (req: Request, res: Response) => {
     const response: BoardResponse = {
       departures: filteredDepartures.map((d: any) => ({
         tripId: d.tripId,
+        when: d.when,
         plannedWhen: d.plannedWhen,
         delay: d.delay,
         platform: d.platform,
@@ -104,6 +105,7 @@ export const getStationBoard = async (req: Request, res: Response) => {
       })),
       arrivals: filteredArrivals.map((a: any) => ({
         tripId: a.tripId,
+        when: a.when,
         plannedWhen: a.plannedWhen,
         delay: a.delay,
         platform: a.platform,

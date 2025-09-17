@@ -11,7 +11,17 @@ const props = defineProps<{
 
 // Headers depend on type (Abfahrt = Nach, Ankunft = Von)
 const headers = [
-  { title: 'Zeit', key: 'plannedWhen', width: 100 },
+  {
+    title: props.type === 'Abfahrt' ? 'Abfahrtszeit' : 'Ankunftszeit',
+    key: 'plannedWhen',
+    width: 100,
+  },
+  { title: 'Verspätung', key: 'delay', width: 120 },
+  {
+    title: props.type === 'Abfahrt' ? 'Neue Abfahrtszeit' : 'Neue Ankunftszeit',
+    key: 'when',
+    width: 200,
+  },
   {
     title: props.type === 'Abfahrt' ? 'Nach' : 'Von',
     key: props.type === 'Abfahrt' ? 'direction' : 'provenance',
@@ -19,7 +29,6 @@ const headers = [
   },
   { title: 'Zug/Linie', key: 'line', width: 150 },
   { title: 'Gleis', key: 'platform', width: 80 },
-  { title: 'Verspätung', key: 'delay', width: 120 },
 ]
 
 // Access current Vuetify theme colors
@@ -41,6 +50,11 @@ const successColor = theme.current.value.colors.success
       {{
         new Date(item.plannedWhen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }}
+    </template>
+    <template #[`item.when`]="{ item }">
+      <span v-if="item.delay && item.delay >= 60">
+        {{ new Date(item.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+      </span>
     </template>
 
     <!-- Delay formatting using theme colors -->

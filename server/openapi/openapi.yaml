@@ -127,6 +127,7 @@ components:
       type: object
       required:
         - tripId
+        - when
         - plannedWhen
         - direction
         - line
@@ -173,6 +174,7 @@ components:
       type: object
       required:
         - tripId
+        - when
         - plannedWhen
         - direction
         - line
