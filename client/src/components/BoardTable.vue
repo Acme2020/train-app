@@ -45,8 +45,8 @@ const successColor = theme.current.value.colors.success
 
     <!-- Delay formatting using theme colors -->
     <template #[`item.delay`]="{ item }">
-      <span v-if="item.delay && item.delay > 0" :style="{ color: errorColor }">
-        +{{ item.delay }} min
+      <span v-if="item.delay && item.delay >= 60" :style="{ color: errorColor }">
+        +{{ Math.floor(item.delay / 60) }} min
       </span>
       <span v-else-if="item.delay === 0" :style="{ color: successColor }"> pünktlich </span>
       <span v-else-if="item.cancelled" :style="{ color: errorColor }"> fällt aus </span>
