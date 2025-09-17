@@ -22,11 +22,15 @@ paths:
             type: string
           required: true
           description: Search query for station name
+          example: "Berlin"
         - in: query
           name: limit
           schema:
             type: integer
-          description: Max number of results (default 5)
+            minimum: 1
+            maximum: 50
+          description: Max number of results (default 25)
+          example: 10
       responses:
         "200":
           description: List of matching stations
@@ -36,6 +40,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Station"
+              example:
+                - id: "8011160"
+                  name: "Berlin Hbf"
+                - id: "8010255"
+                  name: "Berlin Ostbahnhof"
   /api/stations/{stationId}/board:
     get:
       summary: Get departures and arrivals for a specific station
@@ -48,12 +57,16 @@ paths:
             type: string
           required: true
           description: The station EVA ID (e.g., 8000261 for München Hbf)
+          example: "8000261"
         - in: query
           name: minutes
           schema:
             type: integer
             default: 10
+            minimum: 1
+            maximum: 60
           description: Minutes ahead to show departures and arrivals for (default 10)
+          example: 30
       responses:
         "200":
           description: Object containing arrays of departures and arrivals
@@ -70,6 +83,30 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Arrival"
+              example:
+                departures:
+                  - tripId: "1|12345|0|80|20231015"
+                    when: "2023-10-15T14:35:00+02:00"
+                    plannedWhen: "2023-10-15T14:30:00+02:00"
+                    delay: 300
+                    cancelled: false
+                    platform: "11"
+                    direction: "Hamburg Hbf"
+                    provenance: "München Hbf"
+                    line:
+                      name: "ICE 703"
+                      productName: "ICE"
+                arrivals:
+                  - tripId: "1|12346|0|80|20231015"
+                    plannedWhen: "2023-10-15T15:10:00+02:00"
+                    delay: 60
+                    cancelled: false
+                    platform: "7"
+                    direction: "Berlin Hbf"
+                    provenance: "Frankfurt(Main) Hbf"
+                    line:
+                      name: "IC 2046"
+                      productName: "IC"
 components:
   schemas:
     Station:
@@ -80,12 +117,12 @@ components:
       properties:
         id:
           type: string
+          description: The unique EVA ID of the station
+          example: "8000261"
         name:
           type: string
-        latitude:
-          type: number
-        longitude:
-          type: number
+          description: The full name of the station
+          example: "München Hbf"
     Departure:
       type: object
       required:
@@ -96,24 +133,40 @@ components:
       properties:
         tripId:
           type: string
+          description: Unique identifier for the trip
+          example: "1|12345|0|80|20231015"
         when:
           type: string
           format: date-time
+          description: Actual scheduled departure time (including delays)
+          example: "2023-10-15T14:35:00+02:00"
         plannedWhen:
           type: string
           format: date-time
+          description: Originally planned departure time (without delays)
+          example: "2023-10-15T14:30:00+02:00"
         delay:
           type: integer
           nullable: true
+          description: Delay in seconds (null if unknown)
+          example: 300
         cancelled:
           type: boolean
+          description: Whether the departure has been cancelled
+          example: false
         platform:
           type: string
           nullable: true
+          description: Platform number (null if unknown)
+          example: "12"
         direction:
           type: string
+          description: Final destination of the trip
+          example: "Hamburg Hbf"
         provenance:
           type: string
+          description: Station where the train is coming from
+          example: "München Hbf"
         line:
           $ref: "#/components/schemas/Line"
     Arrival:
@@ -126,21 +179,40 @@ components:
       properties:
         tripId:
           type: string
+          description: Unique identifier for the trip
+          example: "1|12346|0|80|20231015"
+        when:
+          type: string
+          format: date-time
+          description: Actual scheduled arrival time (including delays)
+          example: "2023-10-15T15:11:00+02:00"
         plannedWhen:
           type: string
           format: date-time
+          description: Originally planned arrival time (without delays)
+          example: "2023-10-15T15:10:00+02:00"
         delay:
           type: integer
           nullable: true
+          description: Delay in seconds (null if unknown)
+          example: 60
         cancelled:
           type: boolean
+          description: Whether the arrival has been cancelled
+          example: false
         platform:
           type: string
           nullable: true
+          description: Platform number (null if unknown)
+          example: "7"
         direction:
           type: string
+          description: Final destination of the trip
+          example: "Berlin Hbf"
         provenance:
           type: string
+          description: Station where the train is coming from
+          example: "Frankfurt(Main) Hbf"
         line:
           $ref: "#/components/schemas/Line"
     Line:
@@ -150,5 +222,9 @@ components:
       properties:
         name:
           type: string
+          description: The display name of the train line
+          example: "ICE 703"
         productName:
           type: string
+          description: The type of train (ICE, IC, RE, etc.)
+          example: "ICE"
