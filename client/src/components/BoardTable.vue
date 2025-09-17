@@ -11,11 +11,14 @@ const props = defineProps<{
 
 // Headers depend on type (Abfahrt = Nach, Ankunft = Von)
 const headers = [
-  { title: 'Zeit', key: 'when', width: 100 },
-  { title: props.type === 'Abfahrt' ? 'Nach' : 'Von', key: 'stop', width: 200 },
+  { title: 'Zeit', key: 'plannedWhen', width: 100 },
+  {
+    title: props.type === 'Abfahrt' ? 'Nach' : 'Von',
+    key: props.type === 'Abfahrt' ? 'direction' : 'provenance',
+    width: 200,
+  },
   { title: 'Zug/Linie', key: 'line', width: 150 },
   { title: 'Gleis', key: 'platform', width: 80 },
-  { title: 'Richtung', key: 'direction', width: 200 },
   { title: 'Verspätung', key: 'delay', width: 120 },
 ]
 
@@ -34,8 +37,10 @@ const successColor = theme.current.value.colors.success
     fixed-header
   >
     <!-- Format Zeit -->
-    <template #[`item.when`]="{ item }">
-      {{ new Date(item.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+    <template #[`item.plannedWhen`]="{ item }">
+      {{
+        new Date(item.plannedWhen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }}
     </template>
 
     <!-- Delay formatting using theme colors -->
@@ -44,7 +49,8 @@ const successColor = theme.current.value.colors.success
         +{{ item.delay }} min
       </span>
       <span v-else-if="item.delay === 0" :style="{ color: successColor }"> pünktlich </span>
-      <span v-else> &mdash; </span>
+      <span v-else-if="item.cancelled" :style="{ color: errorColor }"> fällt aus </span>
+      <span v-else :style="{ color: successColor }"> pünktlich </span>
     </template>
 
     <!-- Custom "no data" message -->

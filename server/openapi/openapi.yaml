@@ -90,11 +90,9 @@ components:
       type: object
       required:
         - tripId
-        - when
         - plannedWhen
         - direction
         - line
-        - stop
       properties:
         tripId:
           type: string
@@ -107,45 +105,44 @@ components:
         delay:
           type: integer
           nullable: true
+        cancelled:
+          type: boolean
         platform:
           type: string
           nullable: true
         direction:
           type: string
+        provenance:
+          type: string
         line:
           $ref: "#/components/schemas/Line"
-        stop:
-          $ref: "#/components/schemas/Station"
     Arrival:
       type: object
       required:
         - tripId
-        - when
         - plannedWhen
         - direction
         - line
-        - stop
       properties:
         tripId:
           type: string
-        when:
-          type: string
-          format: date-time
         plannedWhen:
           type: string
           format: date-time
         delay:
           type: integer
           nullable: true
+        cancelled:
+          type: boolean
         platform:
           type: string
           nullable: true
         direction:
           type: string
+        provenance:
+          type: string
         line:
           $ref: "#/components/schemas/Line"
-        stop:
-          $ref: "#/components/schemas/Station"
     Line:
       type: object
       required:

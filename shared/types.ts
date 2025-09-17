@@ -7,13 +7,13 @@ export interface Station {
 
 export interface BoardEntry {
   tripId: string;
-  when: string;
   plannedWhen: string;
   delay: number;
   platform: string;
+  provenance: string;
   direction: string;
   line: string;
-  stop: string;
+  cancelled: boolean;
 }
 
 export interface BoardResponse {
