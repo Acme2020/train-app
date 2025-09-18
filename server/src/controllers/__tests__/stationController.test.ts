@@ -173,14 +173,17 @@ describe("stationController", () => {
       );
     });
 
-    it("handles errors and returns 500", async () => {
+    it("handles errors and returns 503", async () => {
       mockReq = { query: { q: "error" } };
 
       await autocompleteStations(mockReq as Request, mockRes as Response);
 
-      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(statusMock).toHaveBeenCalledWith(503);
       expect(jsonMock).toHaveBeenCalledWith(
-        expect.objectContaining({ error: "Failed to fetch stations" })
+        expect.objectContaining({
+          error: "Failed to connect to Deutsche Bahn API for station search",
+          code: "API_CONNECTION_ERROR",
+        })
       );
     });
   });
@@ -206,7 +209,7 @@ describe("stationController", () => {
       );
     });
 
-    it("handles errors and returns 500", async () => {
+    it("handles errors and returns 503", async () => {
       mockReq = {
         params: { stationId: "error" },
         query: {},
@@ -214,9 +217,13 @@ describe("stationController", () => {
 
       await getStationBoard(mockReq as Request, mockRes as Response);
 
-      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(statusMock).toHaveBeenCalledWith(503);
       expect(jsonMock).toHaveBeenCalledWith(
-        expect.objectContaining({ error: "Failed to fetch board" })
+        expect.objectContaining({
+          error:
+            "Failed to connect to Deutsche Bahn API for station board for station 'error'",
+          code: "API_CONNECTION_ERROR",
+        })
       );
     });
   });
