@@ -81,10 +81,6 @@ This command:
 - All development and build commands require **Node.js 22.x**.
 - For backend type generation, use:
 
-  ```sh
-  yarn workspace server generate:server
-  ```
-
 ## Features
 
 - **Station search with autocomplete** - Find stations easily as you type
