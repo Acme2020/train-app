@@ -53,7 +53,7 @@ export interface TransportEvent {
 }
 
 // Interface for the station service
-export interface IStationService {
+export interface StationServiceInterface {
   searchStations(query: string, limit?: number): Promise<Station[]>;
   getStationBoard(stationId: string, duration?: number): Promise<BoardResponse>;
 }

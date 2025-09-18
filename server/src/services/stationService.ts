@@ -1,9 +1,9 @@
 import { createClient } from "db-vendo-client";
 import { profile } from "db-vendo-client/p/db/index.js";
-import { filterByDuration } from "../utils/filterByDuration";
-import { BoardResponse, Station, BoardEntry } from "@shared/types";
+import { filterByDuration } from "../helpers/station/filterByDuration";
+import { BoardResponse, Station } from "@shared/types";
 import {
-  IStationService,
+  StationServiceInterface,
   LocationOptions,
   LocationResponse,
   ProductOptions,
@@ -11,27 +11,22 @@ import {
 import {
   StationServiceError,
   InvalidStationQueryError,
+  InvalidStationIdError,
   ApiConnectionError,
-  DataTransformationError,
 } from "./errors/stationServiceErrors";
+import {
+  servesTrains,
+  getTrainProductsConfig,
+} from "../helpers/station/productFilters";
+import { mapToBoardEntry } from "../helpers/station/dataTransformers";
 
-export class StationService implements IStationService {
+export class StationServiceImpl implements StationServiceInterface {
   private dbClient: any;
-  private defaultProducts: ProductOptions = {
-    nationalExpress: true,
-    national: true,
-    regionalExpress: true,
-    regional: true,
-    suburban: false,
-    subway: false,
-    bus: false,
-    taxi: false,
-    tram: false,
-    ferry: false,
-  };
+  private defaultProducts: ProductOptions;
 
   constructor() {
     this.dbClient = createClient(profile, "train-app/1.0.0");
+    this.defaultProducts = getTrainProductsConfig();
   }
 
   /**
@@ -39,8 +34,8 @@ export class StationService implements IStationService {
    */
   async searchStations(query: string, limit = 25): Promise<Station[]> {
     // Input validation
-    if (!query || query.trim().length < 2) {
-      throw new InvalidStationQueryError(query);
+    if (!query) {
+      throw new InvalidStationQueryError();
     }
 
     try {
@@ -59,7 +54,7 @@ export class StationService implements IStationService {
 
       // Filter to only return stations that serve trains
       return locations
-        .filter((l) => l.type === "station" && this.servesTrains(l.products))
+        .filter((l) => l.type === "station" && servesTrains(l.products))
         .map((l) => ({
           id: l.id,
           name: l.name,
@@ -82,11 +77,11 @@ export class StationService implements IStationService {
     duration = 10
   ): Promise<BoardResponse> {
     if (!stationId || !stationId.trim()) {
-      throw new InvalidStationQueryError(stationId);
+      throw new InvalidStationIdError();
     }
 
     try {
-      // Fetch data in parallel for better performance
+      // Fetch data in parallel
       const [departuresData, arrivalsData] = await Promise.all([
         this.dbClient.departures(stationId, { products: this.defaultProducts }),
         this.dbClient.arrivals(stationId, { products: this.defaultProducts }),
@@ -104,8 +99,8 @@ export class StationService implements IStationService {
 
       // Transform to response format
       return {
-        departures: filteredDepartures.map((d: any) => this.mapToBoardEntry(d)),
-        arrivals: filteredArrivals.map((a: any) => this.mapToBoardEntry(a)),
+        departures: filteredDepartures.map((d: any) => mapToBoardEntry(d)),
+        arrivals: filteredArrivals.map((a: any) => mapToBoardEntry(a)),
       };
     } catch (error) {
       if (error instanceof StationServiceError) {
@@ -132,37 +127,7 @@ export class StationService implements IStationService {
       );
     }
   }
-
-  // Helper methods
-  private servesTrains(products?: LocationResponse["products"]): boolean {
-    if (!products) return false;
-
-    return !!(
-      products.nationalExpress ||
-      products.national ||
-      products.regionalExpress ||
-      products.regional
-    );
-  }
-
-  private mapToBoardEntry(entry: any): BoardEntry {
-    try {
-      return {
-        tripId: entry.tripId,
-        when: entry.when || entry.plannedWhen,
-        plannedWhen: entry.plannedWhen,
-        delay: entry.delay || 0,
-        platform: entry.platform || "",
-        direction: entry.direction || "",
-        provenance: entry.provenance || "",
-        line: entry.line?.name || "",
-        cancelled: entry.cancelled || false,
-      };
-    } catch (error) {
-      throw new DataTransformationError("board entry mapping", error as Error);
-    }
-  }
 }
 
 // Export a singleton instance
-export const stationService = new StationService();
+export const stationService = new StationServiceImpl();

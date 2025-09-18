@@ -1,45 +1,50 @@
+import { AxiosError } from 'axios'
+
 // Format API error messages for display
 export const formatApiError = (error: unknown): string => {
-  // Check for network errors (connection issues)
-  if (isNetworkError(error)) {
+  // Check for network error
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as Error).message === 'string' &&
+    ((error as Error).message.includes('Network Error') ||
+      (error as Error).message.includes('timeout') ||
+      (error as Error).message.includes('connection refused'))
+  ) {
     return 'Netzwerkfehler: Bitte überprüfen Sie Ihre Internetverbindung'
   }
 
-  // Check for 404 errors (resource not found)
-  if (isNotFoundError(error)) {
-    return 'Die angeforderte Ressource wurde nicht gefunden'
+  // Check for AxiosError
+  if (error instanceof AxiosError) {
+    if (error.response?.status === 404) {
+      return 'Die angeforderte Ressource wurde nicht gefunden'
+    }
+    const code = error.response?.data?.code
+    const serverError = error.response?.data?.error
+    if (code === 'API_CONNECTION_ERROR') {
+      return 'Verbindung zur Bahn-API fehlgeschlagen. Bitte versuchen Sie es später erneut.'
+    }
+    if (code === 'INVALID_QUERY') {
+      return 'Ungültige Suchanfrage. Bitte überprüfen Sie Ihre Eingabe.'
+    }
+    if (code === 'NOT_FOUND') {
+      return 'Die angeforderte Station wurde nicht gefunden.'
+    }
+    if (serverError) {
+      return `Fehler: ${serverError}`
+    }
+    if (error.message) return error.message
   }
 
-  // Standard error handling
-  if (error instanceof Error) {
-    return error.message
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as Error).message === 'string'
+  ) {
+    return (error as Error).message
   }
-
-  if (typeof error === 'string') {
-    return error
-  }
-
+  if (typeof error === 'string') return error
   return 'Ein unerwarteter Fehler ist aufgetreten'
-}
-
-// Check if error is a network error
-const isNetworkError = (error: unknown): boolean => {
-  return (
-    error instanceof Error &&
-    (error.message.includes('Network Error') ||
-      error.message.includes('timeout') ||
-      error.message.includes('connection refused'))
-  )
-}
-//Check if error is a not found error
-const isNotFoundError = (error: unknown): boolean => {
-  return Boolean(
-    error &&
-      typeof error === 'object' &&
-      'response' in error &&
-      error.response &&
-      typeof error.response === 'object' &&
-      'status' in error.response &&
-      error.response.status === 404,
-  )
 }

@@ -14,7 +14,7 @@ export class StationServiceError extends Error {
     this.statusCode = statusCode;
     this.cause = cause;
 
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    // Maintains proper stack trace for where the error was thrown
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
@@ -28,10 +28,20 @@ export class StationNotFoundError extends StationServiceError {
 }
 
 export class InvalidStationQueryError extends StationServiceError {
-  constructor(query: string) {
+  constructor() {
     super(
-      `Invalid station query: '${query}'. Query must be at least 2 characters long.`,
+      `Invalid station query. Query cannot be empty.`,
       "INVALID_QUERY",
+      400
+    );
+  }
+}
+
+export class InvalidStationIdError extends StationServiceError {
+  constructor() {
+    super(
+      `Invalid station id. Station ID cannot be empty.`,
+      "INVALID_STATION_ID",
       400
     );
   }
@@ -56,15 +66,5 @@ export class DataTransformationError extends StationServiceError {
       500,
       originalError
     );
-  }
-}
-
-export class RateLimitError extends StationServiceError {
-  constructor(retryAfter?: number) {
-    const message = retryAfter
-      ? `API rate limit exceeded. Retry after ${retryAfter} seconds.`
-      : "API rate limit exceeded. Please try again later.";
-
-    super(message, "RATE_LIMIT_EXCEEDED", 429);
   }
 }
