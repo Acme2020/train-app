@@ -33,10 +33,14 @@ const isValid = computed(() => {
   return rules.every((rule) => rule(localValue.value) === true)
 })
 
-// Emit changes only if valid
+// Emit changes only if valid, with debounce
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
 watch(localValue, (val) => {
   if (isValid.value) {
-    emit('update:duration', Number(val))
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => {
+      emit('update:duration', Number(val))
+    }, 300)
   }
 })
 </script>
